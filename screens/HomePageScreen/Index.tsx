@@ -1,16 +1,23 @@
-import { Image, ScrollView, StyleSheet, Text, View } from "react-native";
+import { Image, ScrollView, StyleSheet, Text, View, ActivityIndicator } from "react-native";
 import { FC, useEffect, useRef, useState } from "react";
 import { HomeProps } from "../../types/NavigationPropsTypes";
 import BottomTabNavigator from "../../components/BottomNavBar";
 import { getImages } from "../../services/FetchToApi";
-import { ActivityIndicator } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Index: FC<HomeProps> = ({navigation}) => {
     
     const [images, setImages] = useState<string[]>([]);
     const isLoading = useRef<boolean>(true);
     
+    const logoutFunction = async() => {
+      await AsyncStorage.removeItem("userData");
+      navigation.replace("Login");
+    };
 
+    const CameraFunction = () => {
+      navigation.replace("Camera");
+    }
     useEffect(() => {
         const fetchImages = async () => {
           try {
@@ -51,7 +58,7 @@ const Index: FC<HomeProps> = ({navigation}) => {
           ))
         )}
       </ScrollView>
-      <BottomTabNavigator />
+      <BottomTabNavigator logoutFunction={logoutFunction} CameraFunction={CameraFunction}/>
     </View>
   );
     

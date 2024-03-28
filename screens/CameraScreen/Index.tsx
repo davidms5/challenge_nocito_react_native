@@ -1,5 +1,5 @@
 import React, { useState, useRef, FC } from 'react';
-import { View, Button, Image, StyleSheet } from 'react-native';
+import { View, Button, Image, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { RNCamera } from 'react-native-camera';
 import { CameraProps } from '../../types/NavigationPropsTypes';
 import { PostImage } from '../../services/FetchToApi';
@@ -34,7 +34,35 @@ const Index: FC<CameraProps> = ({navigation}) => {
       ShowToast("info", "hubo un problema en subir la imagen", "intente nuevamente");
       return;
 
+    };
+
+    const goToHome = () => {
+      navigation.replace("Home");
+      return;
     }
+
+    const retakePhoto = () => {
+      setPhotoUri(null);
+      return;
+    };
+
+    if(photoUri) {
+      return (
+        <View style={styles.container}>
+      {/* Image */}
+      <Image source={{ uri: photoUri }} style={styles.image} />
+
+      {/* Retake Photo Button */}
+      <TouchableOpacity onPress={retakePhoto} style={styles.button}>
+        <Text style={styles.buttonText}>Tomar otra foto</Text>
+      </TouchableOpacity>
+
+      {/* Send Photo Button */}
+      <Button title="Enviar foto" onPress={sendPhoto} />
+
+    </View>
+      );
+    };
       return (
         <View style={styles.container}>
           <RNCamera
@@ -44,8 +72,7 @@ const Index: FC<CameraProps> = ({navigation}) => {
             type={RNCamera.Constants.Type.back}
           />
           <Button title="tomar foto" onPress={takePhoto} />
-          <Button title="enviar foto" onPress={sendPhoto}/>
-          {photoUri && <Image source={{ uri: photoUri }} style={styles.image} />}
+          <Button title="volver" onPress={goToHome}/>
         </View>
       );
 };
@@ -62,8 +89,19 @@ const styles = StyleSheet.create({
     },
     image: {
       marginTop: 20,
-      width: 200,
-      height: 200,
+      width: "90%",
+      height: "80%",
+    },
+    button: {
+      backgroundColor: 'blue',
+      paddingVertical: 10,
+      paddingHorizontal: 17,
+      borderRadius: 5,
+      marginBottom: 5, // Add some margin below the button
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 16,
     },
   });
   

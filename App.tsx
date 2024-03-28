@@ -61,6 +61,7 @@ function App(): React.JSX.Element {
 
   return (
     <>
+    
     <NavigationContainer>
       <StatusBar
         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
@@ -68,6 +69,7 @@ function App(): React.JSX.Element {
       />
       <MyStack/>
     </NavigationContainer>
+    
     <Toast/>
     </>
   );
