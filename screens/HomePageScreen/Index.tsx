@@ -2,12 +2,21 @@ import { Image, ScrollView, StyleSheet, Text, View, ActivityIndicator } from "re
 import { FC, useEffect, useRef, useState } from "react";
 import { HomeProps } from "../../types/NavigationPropsTypes";
 import BottomTabNavigator from "../../components/BottomNavBar";
-import { getImages } from "../../services/FetchToApi";
+import { base_url, getImages } from "../../services/FetchToApi";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+
+interface ImageType {
+  url: string;
+};
+
+interface photosArray {
+  imagenes: ImageType[];
+};
+
 
 const Index: FC<HomeProps> = ({navigation}) => {
     
-    const [images, setImages] = useState<string[]>([]);
+    const [images, setImages] = useState<ImageType[]| null>(null);
     const isLoading = useRef<boolean>(true);
     
     const logoutFunction = async() => {
@@ -24,15 +33,16 @@ const Index: FC<HomeProps> = ({navigation}) => {
             const response = await getImages();
 
             if (response && response.ok) {
-              const data: string[] = await response.json();
-              setImages(data);
+              const data: photosArray = await response.json();
+              console.log(data)
+              setImages(data.imagenes);
             } else {
               console.error("Failed to fetch images:");
-              setImages([]);
+              setImages(null);
             }
           } catch (error) {
             console.error("Error fetching images:", error);
-            setImages([]);
+            setImages(null);
             isLoading.current = false;
           } finally {
             isLoading.current = false;
@@ -41,22 +51,18 @@ const Index: FC<HomeProps> = ({navigation}) => {
     
         fetchImages();
       }, []);
-    
+    console.log("imagenes:",images);
     return(
         <View style={{ flex: 1 }}>
-      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: 30, color: "black" }}>Home Page</Text>
-      </View>
+     
       <ScrollView style={{ flex: 1 }}>
-        {isLoading.current ? (
-          <ActivityIndicator size="large" color="blue" style={styles.loadingIndicator} />
-        ) : images.length === 0 ? (
+        {images && images.length === 0 ? (
           <Text style={styles.emptyText}>No images available</Text>
-        ) : (
+        ) : images ? (
           images.map((image, index) => (
-            <Image key={index} source={{ uri: image }} style={styles.image} />
+            <Image key={index} source={{ uri: `${base_url}${image.url}` }} style={styles.image} />
           ))
-        )}
+        ): null}
       </ScrollView>
       <BottomTabNavigator logoutFunction={logoutFunction} CameraFunction={CameraFunction}/>
     </View>

@@ -26,7 +26,7 @@ const Index: FC<CameraProps> = ({navigation}) => {
       const successUpload = await PostImage(photoUri);
 
       if(successUpload){
-        ShowToast("sucess", "la imagen fue subida con exito", "");
+        ShowToast("success", "la imagen fue subida con exito", "");
         navigation.replace("Home");
         return;
       };

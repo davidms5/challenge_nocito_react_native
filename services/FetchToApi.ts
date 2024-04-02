@@ -1,7 +1,7 @@
 import { FetchUserLoginTypes, FetchUserSignUpTypes } from "../types/FetchUserTypes";
 import { ShowToast } from "../utils/ShowAlerts";
 
-const base_url = "https://kw9mphbz-8080.brs.devtunnels.ms";
+export const base_url = "https://kw9mphbz-8080.brs.devtunnels.ms";
 
 
 export async function POSTUserData(url: string, userData: FetchUserSignUpTypes | FetchUserLoginTypes) {
@@ -43,10 +43,12 @@ export async function PostImage(uri: string) {
     try {
         const formData = new FormData();
         formData.append('imagen', {
-            uri,
-            type: 'image/jpeg',
-        });
-
+            uri: uri,
+            name: 'someImageName.jpg', // Adding a name for the file is important
+            type: 'image/jpeg', // Ensure the MIME type is correctly set
+          });
+        
+        console.log(uri);
         const response = await fetch(`${base_url}/usuarios/upload`, {
             method: 'POST',
             body: formData,
@@ -55,7 +57,8 @@ export async function PostImage(uri: string) {
               'Content-Type': 'multipart/form-data',
             },
           });
-
+          const responseData = await response.json();
+        console.log(responseData);
         if (response.ok) {
             console.log('Photo uploaded successfully!');
             return true;
